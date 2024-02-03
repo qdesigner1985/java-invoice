@@ -11,14 +11,14 @@ public class Invoice {
 
     public void addProduct(Product product) {
         if (product == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Product can't be null");
         }
             products.add(product);
     }
 
     public void addProduct(Product product, Integer quantity) {
         if (quantity == 0 || quantity < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Product quantity can't be null or less than zero ");
         }
         for (int i = 0; i < quantity; i++)
         {

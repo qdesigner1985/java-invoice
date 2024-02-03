@@ -14,10 +14,10 @@ public abstract class Product {
         this.price = price;
         this.taxPercent = tax;
         if (this.name == null || this.name == "") {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Product name can't be null or empty");
         }
         if (this.price == null || this.price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Product price can't be null or less than zero");
         }
     }
 
