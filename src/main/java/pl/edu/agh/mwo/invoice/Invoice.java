@@ -8,6 +8,13 @@ import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
     public static final int INT = 0;
+    public static int lastNumber;
+    private final int number;
+    
+    public Invoice() {
+        this.number = ++lastNumber;
+    }
+
     public static final int INT2 = 1;
 
     private final Map<Product, Integer> products = new HashMap<>();
@@ -43,5 +50,9 @@ public class Invoice {
             totalGross = totalGross.add(product.getPriceWithTax().multiply(quantity));
         }
         return totalGross;
+    }
+
+    public int getNumber() {
+        return number;
     }
 }
