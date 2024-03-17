@@ -11,5 +11,5 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-     - name: Test
-       run: mvn test
+      - name: Test
+        run: mvn test
