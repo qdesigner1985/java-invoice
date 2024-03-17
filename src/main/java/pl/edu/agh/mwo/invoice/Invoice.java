@@ -7,14 +7,17 @@ import java.util.Map;
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
-    private Map<Product, Integer> products = new HashMap<Product, Integer>();
+    public static final int INT = 0;
+    public static final int INT2 = 1;
+
+    private final Map<Product, Integer> products = new HashMap<>();
 
     public void addProduct(Product product) {
-        addProduct(product, 1);
+        addProduct(product, INT2);
     }
 
     public void addProduct(Product product, Integer quantity) {
-        if (product == null || quantity <= 0) {
+        if (product == null || quantity <= INT) {
             throw new IllegalArgumentException();
         }
         products.put(product, quantity);
