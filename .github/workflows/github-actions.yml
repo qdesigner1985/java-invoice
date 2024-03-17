@@ -24,4 +24,4 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: List
-        run: mvn test
+        run: mvn checkstyle:check
