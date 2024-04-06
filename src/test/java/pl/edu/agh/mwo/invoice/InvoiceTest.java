@@ -4,10 +4,8 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import pl.edu.agh.mwo.invoice.product.DairyProduct;
-import pl.edu.agh.mwo.invoice.product.OtherProduct;
-import pl.edu.agh.mwo.invoice.product.Product;
-import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+import java.time.LocalDate;
+import pl.edu.agh.mwo.invoice.product.*;
 
 import java.math.BigDecimal;
 
@@ -125,12 +123,112 @@ public class InvoiceTest {
     }
 
     @Test
-    public void testInvoiceHasNumber(){
-    Invoice invoice = new Invoice();
-    int number = invoice.getNumber();
+    public void testInvoiceHasNumber() {
+        int number = invoice.getNumber();
+        Assert.assertTrue(number > 0);
     }
+
     @Test
     public void testInvoiceHasNumberGratherThanZero(){
         Assert.assertTrue(new Invoice().getNumber()>0);
+    }
+
+    @Test
+    public void testTwoInvoicesHaveDifferentNumbers() {
+        Assert.assertNotEquals(invoice.getNumber(), new Invoice().getNumber());
+    }
+
+    @Test
+    public void testTheSameInvoiceHasTheSameNumber() {
+        Assert.assertEquals(invoice.getNumber(), invoice.getNumber());
+    }
+
+    @Test
+    public void testNextInvoicesHaveNextNumbers() {
+        Assert.assertEquals(invoice.getNumber() + 1, new Invoice().getNumber());
+    }
+
+    @Test
+    public void testInvoiceSummaryEmpty() {
+        String faktura = "FV nr: " + invoice.getNumber() + "\n" +
+                "Ilość produktów: 0";
+        Assert.assertEquals(invoice.getSummary(), faktura);
+    }
+
+    @Test
+    public void testInvoiceSummaryOneProduct() {
+        invoice.addProduct(new DairyProduct("P1", new BigDecimal(12)), 5);
+        String faktura = "FV nr: " + invoice.getNumber() + "\n" +
+                "P1\t5\t12\n" +
+                "Ilość produktów: 1";
+        Assert.assertEquals(invoice.getSummary(), faktura);
+    }
+
+    @Test
+    public void testInvoiceSummaryDuplicates() {
+        DairyProduct prod1 = new DairyProduct("Product 1", new BigDecimal(15));
+        DairyProduct prod2 = new DairyProduct("Product 2", new BigDecimal(3));
+        DairyProduct prod3 = new DairyProduct("Product 3", new BigDecimal(8));
+        invoice.addProduct(prod1, 4);
+        invoice.addProduct(prod1, 4);
+        invoice.addProduct(prod1);
+        invoice.addProduct(prod2, 1);
+        invoice.addProduct(prod2, 1);
+        invoice.addProduct(prod2);
+        invoice.addProduct(prod3, 6);
+        invoice.addProduct(prod3, 6);
+        invoice.addProduct(prod3);
+        String sb1 = "FV nr: " + invoice.getNumber() + "\n" +
+                "Product 1\t9\t15\n" +
+                "Product 2\t3\t3\n" +
+                "Product 3\t13\t8\n" +
+                "Ilość produktów: 3";
+        Assert.assertEquals(invoice.getSummary(), sb1);
+    }
+
+    @Test
+    public void testAddProductsDuplicates() {
+        DairyProduct prod1 = new DairyProduct("Product 1", new BigDecimal(15));
+        DairyProduct prod2 = new DairyProduct("Product 2", new BigDecimal(3));
+        DairyProduct prod3 = new DairyProduct("Product 3", new BigDecimal(8));
+        invoice.addProduct(prod1, 3);
+        invoice.addProduct(prod2, 5);
+        invoice.addProduct(prod3, 8);
+        invoice.addProduct(prod3, 8);
+        invoice.addProduct(prod2, 5);
+        invoice.addProduct(prod1, 3);
+        Assert.assertEquals(invoice.getProductsNumber(), 3);
+    }
+
+    @Test
+    public void testPricesProductsWithExciseMotherInLawDay() {
+        DairyProduct prod1 = new DairyProduct("Product 1", new BigDecimal("10"));
+        BottleOfWine bottleOfWine1 = new BottleOfWine("Bottle of wine 1", new BigDecimal("11"));
+        BottleOfWine bottleOfWine2 = new BottleOfWine("Bottle of wine 2", new BigDecimal("18"));
+        FuelCanister fuelCanister1 = new FuelCanister("Fuel canister 1", new BigDecimal("200"));
+        FuelCanister fuelCanister2 = new FuelCanister("Fuel canister 2", new BigDecimal("200"));
+        invoice.setInvoiceDate(LocalDate.parse("2024-03-05"));
+        invoice.addProduct(prod1);
+        invoice.addProduct(bottleOfWine1);
+        invoice.addProduct(bottleOfWine2);
+        invoice.addProduct(fuelCanister1);
+        invoice.addProduct(fuelCanister2);
+        Assert.assertEquals(invoice.getGrossTotal(), new BigDecimal("468.71"));
+    }
+
+    @Test
+    public void testPricesProductsWithExciseOrdinaryDay() {
+        DairyProduct prod1 = new DairyProduct("Product 1", new BigDecimal("10"));
+        BottleOfWine bottleOfWine1 = new BottleOfWine("Bottle of wine 1", new BigDecimal("11"));
+        BottleOfWine bottleOfWine2 = new BottleOfWine("Bottle of wine 2", new BigDecimal("18"));
+        FuelCanister fuelCanister1 = new FuelCanister("Fuel canister 1", new BigDecimal("200"));
+        FuelCanister fuelCanister2 = new FuelCanister("Fuel canister 2", new BigDecimal("200"));
+        invoice.setInvoiceDate(LocalDate.parse("2023-11-10"));
+        invoice.addProduct(prod1);
+        invoice.addProduct(bottleOfWine1);
+        invoice.addProduct(bottleOfWine2);
+        invoice.addProduct(fuelCanister1);
+        invoice.addProduct(fuelCanister2);
+        Assert.assertEquals(invoice.getGrossTotal(), new BigDecimal("560.71"));
     }
 }

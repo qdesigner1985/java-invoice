@@ -1,33 +1,44 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.time.LocalDate;
 
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
-    public static final int INT = 0;
+
+    public static LocalDate currentDate = LocalDate.now();
     public static int lastNumber;
     private final int number;
-    
+
     public Invoice() {
         this.number = ++lastNumber;
     }
 
-    public static final int INT2 = 1;
-
-    private final Map<Product, Integer> products = new HashMap<>();
+    private final Map<Product, Integer> products = new LinkedHashMap<>();
 
     public void addProduct(Product product) {
-        addProduct(product, INT2);
+        if (product == null) {
+            throw new IllegalArgumentException();
+        }
+        if (products.containsKey(product)) {
+            products.put(product, (products.get(product) + 1));
+        } else {
+            products.put(product, 1);
+        }
     }
 
     public void addProduct(Product product, Integer quantity) {
-        if (product == null || quantity <= INT) {
+        if (product == null || quantity <= 0) {
             throw new IllegalArgumentException();
         }
-        products.put(product, quantity);
+        if (products.containsKey(product)) {
+            products.put(product, (products.get(product) + quantity));
+        } else {
+            products.put(product, quantity);
+        }
     }
 
     public BigDecimal getNetTotal() {
@@ -55,4 +66,20 @@ public class Invoice {
     public int getNumber() {
         return number;
     }
+
+    public String getSummary() {
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append("FV nr: ").append(this.number).append("\n");
+        for (Product product : products.keySet()) {
+            sb1.append(product.getName()).append("\t").append(products.get(product)).append("\t")
+                    .append(product.getPrice()).append("\n");
+        }
+        sb1.append("Ilość produktów: ").append(products.size());
+
+        return sb1.toString();
+    }
+
+    public int getProductsNumber() { return products.size(); }
+
+    public void setInvoiceDate(LocalDate date) { Invoice.currentDate = date; }
 }
