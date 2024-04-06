@@ -50,5 +50,7 @@ public abstract class Product {
 
     public BigDecimal getExcise() { return excise; }
 
-    public BigDecimal getPriceWithTax() { return price.multiply(taxPercent).add(price).add(excise); }
+    public BigDecimal getPriceWithTax() {
+        return price.multiply(taxPercent).add(price).add(excise);
+    }
 }

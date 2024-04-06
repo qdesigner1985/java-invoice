@@ -79,7 +79,11 @@ public class Invoice {
         return sb1.toString();
     }
 
-    public int getProductsNumber() { return products.size(); }
+    public int getProductsNumber() {
+        return products.size();
+    }
 
-    public void setInvoiceDate(LocalDate date) { Invoice.currentDate = date; }
+    public void setInvoiceDate(LocalDate date) {
+        Invoice.currentDate = date;
+    }
 }
