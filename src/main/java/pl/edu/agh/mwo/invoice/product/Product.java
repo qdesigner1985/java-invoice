@@ -30,6 +30,7 @@ public abstract class Product {
                 || excise.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
+        
         this.name = name;
         this.price = price;
         this.taxPercent = tax;
@@ -48,7 +49,9 @@ public abstract class Product {
         return taxPercent;
     }
 
-    public BigDecimal getExcise() { return excise; }
+    public BigDecimal getExcise() { 
+        return excise; 
+    }
 
     public BigDecimal getPriceWithTax() {
         return price.multiply(taxPercent).add(price).add(excise);
